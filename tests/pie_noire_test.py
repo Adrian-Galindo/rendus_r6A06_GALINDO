@@ -1,10 +1,10 @@
 import pytest
 
-from vaches.exception.InvalidVacheException import InvalidVacheException
-from vaches.enum.TypeNourriture import TypeNourriture
-from vaches.pie_noire import pie_noire as PieNoire
-from vaches.vache import vache as Vache
-from vaches.vache_a_lait import vache_a_lait as VacheALait
+from vaches.exceptions import InvalidVacheException
+from vaches.nourriture.type_nourriture import TypeNourriture
+from vaches.domain.pie_noire import pie_noire as PieNoire
+from vaches.domain.vache import vache as Vache
+from vaches.domain.vache_a_lait import vache_a_lait as VacheALait
 
 
 @pytest.fixture

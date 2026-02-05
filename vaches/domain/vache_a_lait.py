@@ -1,5 +1,5 @@
-from vaches.exception.InvalidVacheException import InvalidVacheException
-from vaches.vache import vache
+from vaches.exceptions import InvalidVacheException
+from vaches.domain.vache import vache
 
 class vache_a_lait(vache):
     # --- constantes ---

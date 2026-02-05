@@ -1,4 +1,4 @@
-from vaches.exception.InvalidVacheException import InvalidVacheException
+from vaches.exceptions import InvalidVacheException
 from typing import Any
 
 class vache:

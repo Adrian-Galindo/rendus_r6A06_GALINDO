@@ -1,7 +1,7 @@
 import pytest
 
-from vaches.exception.InvalidVacheException import InvalidVacheException
-from vaches.vache_a_lait import vache_a_lait as VacheALait
+from vaches.exceptions import InvalidVacheException
+from vaches.domain.vache_a_lait import vache_a_lait as VacheALait
 
 # -------------------------
 # RUMINATION -> PRODUCTION/ STOCKAGE DE LAIT (dépend de la panse)

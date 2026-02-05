@@ -1,7 +1,7 @@
-from vaches.vache_a_lait import vache_a_lait
-from vaches.enum.TypeNourriture import TypeNourriture
-from vaches.exception.InvalidVacheException import InvalidVacheException
-from vaches.Ration import Ration
+from vaches.domain.vache_a_lait import vache_a_lait
+from vaches.nourriture.type_nourriture import TypeNourriture
+from vaches.exceptions import InvalidVacheException
+from vaches.domain.ration import Ration
 
 class pie_noire(vache_a_lait):
     # --- constantes ---
