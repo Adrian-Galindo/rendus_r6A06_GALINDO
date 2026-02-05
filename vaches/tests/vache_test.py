@@ -149,13 +149,19 @@ def test_should_raise_invalid_vache_exception_given_empty_panse_when_ruminer():
 # VIEILLIR
 # -------------------------
 
+def _create_vache_with_age(age: int) -> Vache:
+    '''Helper pour créer une vache avec un âge spécifique en appelant vieillir() le nombre de fois nécessaire'''
+    vache = Vache(petit_nom="Marguerite", poids=450.0)
+    for i in range(age):
+        vache.vieillir()
+    return vache
+
 def test_should_increase_age_by_one_given_age_below_age_max_when_vieillir():
     # Arrange
-    vache = Vache(petit_nom="Marguerite", poids=450.0)
+    vache = _create_vache_with_age(5)
 
     # Act
-    for i in range(6):
-        vache.vieillir()
+    vache.vieillir()
 
     # Assert (1 assertion métier)
     assert vache.age == 6
@@ -163,9 +169,8 @@ def test_should_increase_age_by_one_given_age_below_age_max_when_vieillir():
 
 def test_should_raise_invalid_vache_exception_given_age_max_when_vieillir():
     # Arrange
-    vache = Vache(petit_nom="Marguerite", poids=450.0)
+    vache = _create_vache_with_age(Vache.AGE_MAX)
 
     # Act / Assert
     with pytest.raises(InvalidVacheException):
-        for i in range(26):
-            vache.vieillir()
+        vache.vieillir()
