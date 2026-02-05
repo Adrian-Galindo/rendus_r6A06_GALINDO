@@ -12,12 +12,12 @@ class vache:
     # --- compteur d'ID (classe) ---
     NEXT_ID : int = 1
 
-    def __init__(self, petit_nom, age, poids):
+    def __init__(self, petit_nom, poids):
         self.id = self.NEXT_ID
         vache.NEXT_ID += 1
 
         self.petit_nom = petit_nom
-        self.age = age
+        self.age = 0
         self.poids = poids
         self.panse = 0.0
 
