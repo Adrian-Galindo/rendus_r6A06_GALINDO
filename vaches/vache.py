@@ -1,4 +1,4 @@
-#from remiseVache.fr.devavance.InvalidVacheException import InvalidVacheException
+from vaches.exception.InvalidVacheException import InvalidVacheException
 from typing import Any
 
 class vache:
@@ -78,7 +78,7 @@ class vache:
         self.panse += quantite
 
     def valider_rumination_possible(self):
-        if self.panse < vache.POIDS_MIN_PANSE:
+        if self.panse <= 0:
             raise InvalidVacheException("Panse insuffisante pour ruminer")
 
     def valider_etat(self):

@@ -1,8 +1,7 @@
 import pytest
 
-from remiseVache.fr.devavance.InvalidVacheException import InvalidVacheException
-from remiseVache.fr.devavance.Vache import Vache
-
+from vaches.exception.InvalidVacheException import InvalidVacheException
+from vaches.vache import vache as Vache
 
 # -------------------------
 # CONSTRUCTION
