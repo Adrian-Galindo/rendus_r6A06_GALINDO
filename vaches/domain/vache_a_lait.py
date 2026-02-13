@@ -1,5 +1,7 @@
 from vaches.exceptions import InvalidVacheException
 from vaches.domain.vache import vache
+from vaches.strategies.standard_milk import StandardMilkStrategy
+
 
 class vache_a_lait(vache):
     # --- constantes ---
@@ -11,11 +13,11 @@ class vache_a_lait(vache):
     lait_total_produit : float
     lait_total_traite : float
 
-    def __init__(self, petitNom, age, poids):
+    def __init__(self, petitNom, poids, rumination_strategy = StandardMilkStrategy):
         self.lait_disponible = 0.0
         self.lait_total_produit = 0.0
         self.lait_total_traite = 0.0
-        super().__init__(petitNom, age, poids)
+        super().__init__(petitNom, poids, rumination_strategy)
 
     def __str__(self):
         return (
@@ -24,21 +26,6 @@ class vache_a_lait(vache):
             f"Lait disponible : {self.lait_disponible} L, "
             f"Lait total trait : {self.lait_total_traite} L"
         )
-
-    def _calculer_lait(self, panse_avant):
-        production = vache_a_lait.RENDEMENT_LAIT * panse_avant
-        futur_lait_dispo = self.lait_disponible + production
-
-        if futur_lait_dispo <= vache_a_lait.PRODUCTION_LAIT_MAX:
-            return production
-        else:
-            raise InvalidVacheException(
-                "La production de lait dépasse le maximum autorisé"
-            )
-
-    def _stocker_lait(self, quantite):
-        self.lait_disponible += quantite
-        self.lait_total_produit += quantite
 
     def traire(self, quantite):
         if quantite <= 0.0:

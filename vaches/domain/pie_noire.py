@@ -1,11 +1,25 @@
+from typing import Dict
 from vaches.domain.vache_a_lait import vache_a_lait
 from vaches.nourriture.type_nourriture import TypeNourriture
 from vaches.exceptions import InvalidVacheException
-from vaches.domain.ration import Ration
+from vaches.strategies.pie_noire_milk import PieNoireMilkStrategy
+
+
+class Ration:
+    """
+    Classe association entre une vache et un type de nourriture.
+    Stocke la quantité consommée.
+    """
+    def __init__(self, vache: "pie_noire", nourriture: TypeNourriture, quantite: float = 0.0):
+        self.vache = vache
+        self.nourriture = nourriture
+        self.quantite = quantite
+        vache._ration[nourriture] = self
+
 
 class pie_noire(vache_a_lait):
     # --- constantes ---
-    COEFFICIENT_NUTRITIONNEL: dict[TypeNourriture, float] = {
+    COEFFICIENT_NUTRITIONNEL: Dict[TypeNourriture, float] = {
         TypeNourriture.MARGUERITE: 1.1,
         TypeNourriture.HERBE: 1.0,
         TypeNourriture.FOIN: 0.9,
@@ -16,13 +30,21 @@ class pie_noire(vache_a_lait):
     # --- attributs d'instance ---
     nb_taches_noires: int
     nb_tache_blanche: int
-    _ration: dict[TypeNourriture, Ration]
+    _ration: Dict[TypeNourriture, Ration]
 
-    def __init__(self, petit_nom, poids, age, nb_taches_blanches, nb_taches_noires):
+    def __init__(
+            self,
+            petit_nom: str,
+            poids: float,
+            nb_taches_blanches: int,
+            nb_taches_noires: int,
+            rumination_strategy=PieNoireMilkStrategy
+    ):
         self.nb_taches_noires = nb_taches_noires
         self.nb_tache_blanche = nb_taches_blanches
-        self._ration = {}
-        super().__init__(petit_nom, age, poids)
+        self._ration: Dict[TypeNourriture, Ration] = {}  # dictionnaire d'associations
+
+        super().__init__(petit_nom, poids, rumination_strategy)
 
         self.valider_etat()
 
@@ -31,16 +53,17 @@ class pie_noire(vache_a_lait):
             raise InvalidVacheException("Quantité invalide")
 
         if nourriture is None:
-            # Comportement classique : panse seulement
             self.ajouter_panse(quantite)
             return
 
         if nourriture not in self.COEFFICIENT_NUTRITIONNEL:
             raise InvalidVacheException("Type de nourriture invalide")
 
-        # Met à jour la ration interne
+        # Crée ou récupère la ration
         if nourriture not in self._ration:
-            self._ration[nourriture] = Ration(0.0)
+            Ration(self, nourriture, 0.0)
+
+        # Met à jour la quantité
         self._ration[nourriture].quantite += quantite
 
         # Impact sur la panse avec coefficient
@@ -48,12 +71,20 @@ class pie_noire(vache_a_lait):
         self.ajouter_panse(quantite * coef)
 
     def ruminer(self):
-        lait = super().ruminer()  # panse vidée, lait produit
-        self._ration.clear()      # on vide la ration interne
+        # Appel de la rumination du parent (gain poids, calcul lait, stock)
+        panse_avant = self.panse
+        lait = super().ruminer()
+
+        # Hook post-rumination de la stratégie
+        self.rumination_strategy.post_rumination(self, panse_avant, lait)
+
         return lait
 
     @property
-    def ration(self) -> dict[TypeNourriture, float]:
+    def ration(self) -> Dict[TypeNourriture, float]:
+        """
+        Retourne un dictionnaire {type_nourriture: quantite}
+        """
         return {nourriture: ration.quantite for nourriture, ration in self._ration.items()}
 
     def valider_etat(self):

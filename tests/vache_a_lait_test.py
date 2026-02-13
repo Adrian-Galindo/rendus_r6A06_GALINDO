@@ -2,6 +2,8 @@ import pytest
 
 from vaches.exceptions import InvalidVacheException
 from vaches.domain.vache_a_lait import vache_a_lait as VacheALait
+from vaches.strategies.standard_milk import StandardMilkStrategy
+
 
 # -------------------------
 # RUMINATION -> PRODUCTION/ STOCKAGE DE LAIT (dépend de la panse)
@@ -9,7 +11,7 @@ from vaches.domain.vache_a_lait import vache_a_lait as VacheALait
 
 def test_should_start_with_empty_panse_given_new_vache_a_lait():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
 
     # Act / Assert (1 assertion métier)
     assert vache.panse == 0
@@ -17,7 +19,7 @@ def test_should_start_with_empty_panse_given_new_vache_a_lait():
 
 def test_should_increase_lait_disponible_given_positive_panse_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
 
     # Act
@@ -29,7 +31,7 @@ def test_should_increase_lait_disponible_given_positive_panse_when_ruminer():
 
 def test_should_increase_lait_total_produit_given_positive_panse_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
 
     # Act
@@ -43,7 +45,7 @@ def test_should_increase_lait_total_produit_given_positive_panse_when_ruminer():
 
 def test_should_return_lait_produced_given_positive_panse_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
 
     # Act
@@ -57,7 +59,7 @@ def test_should_return_lait_produced_given_positive_panse_when_ruminer():
 
 def test_should_raise_invalid_vache_exception_given_empty_panse_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
 
     # Act / Assert
     with pytest.raises(InvalidVacheException):
@@ -66,7 +68,7 @@ def test_should_raise_invalid_vache_exception_given_empty_panse_when_ruminer():
 
 def test_should_accumulate_lait_disponible_given_two_ruminations():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
 
 
     # Act
@@ -86,7 +88,7 @@ def test_should_accumulate_lait_disponible_given_two_ruminations():
 
 def test_should_decrease_lait_disponible_given_valid_litres_when_traire():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -99,7 +101,7 @@ def test_should_decrease_lait_disponible_given_valid_litres_when_traire():
 
 def test_should_return_litres_given_valid_litres_when_traire():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -112,7 +114,7 @@ def test_should_return_litres_given_valid_litres_when_traire():
 
 def test_should_increase_lait_total_traite_given_valid_litres_when_traire():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -125,7 +127,7 @@ def test_should_increase_lait_total_traite_given_valid_litres_when_traire():
 
 def test_should_accumulate_lait_total_traite_given_two_traite_operations():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -140,7 +142,7 @@ def test_should_accumulate_lait_total_traite_given_two_traite_operations():
 @pytest.mark.parametrize("litres", [0.0, -1.0])
 def test_should_raise_invalid_vache_exception_given_non_positive_litres_when_traire(litres):
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -151,7 +153,7 @@ def test_should_raise_invalid_vache_exception_given_non_positive_litres_when_tra
 
 def test_should_raise_invalid_vache_exception_given_litres_greater_than_lait_disponible_when_traire():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()
 
@@ -166,7 +168,7 @@ def test_should_raise_invalid_vache_exception_given_litres_greater_than_lait_dis
 
 def test_should_raise_invalid_vache_exception_given_typed_food_when_brouter_on_vache_a_lait():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
 
     # Act / Assert
     with pytest.raises(InvalidVacheException):
@@ -197,7 +199,7 @@ def _produire_lait_jusqua(vache: VacheALait, cible_lait: float) -> None:
 
 def test_should_allow_ruminer_given_lait_production_reaches_production_max_exactly():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     _produire_lait_jusqua(vache, VacheALait.PRODUCTION_LAIT_MAX - 1.0)
 
     # Act
@@ -211,7 +213,7 @@ def test_should_allow_ruminer_given_lait_production_reaches_production_max_exact
 
 def test_should_raise_invalid_vache_exception_given_lait_production_exceeds_production_max_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     _produire_lait_jusqua(vache, VacheALait.PRODUCTION_LAIT_MAX - 0.5)
 
     # Act / Assert
@@ -224,7 +226,7 @@ def test_should_raise_invalid_vache_exception_given_lait_production_exceeds_prod
 
 def test_should_allow_ruminer_again_given_traite_frees_capacity_below_production_max():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     _produire_lait_jusqua(vache, VacheALait.PRODUCTION_LAIT_MAX)
     vache.traire(10.0)
 
@@ -239,7 +241,7 @@ def test_should_allow_ruminer_again_given_traite_frees_capacity_below_production
 
 def test_should_raise_invalid_vache_exception_given_production_max_reached_when_ruminer():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     _produire_lait_jusqua(vache, VacheALait.PRODUCTION_LAIT_MAX)
 
     # Act / Assert
@@ -250,7 +252,7 @@ def test_should_raise_invalid_vache_exception_given_production_max_reached_when_
 
 def test_should_include_milk_fields_in_str_given_new_vache_a_lait():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
 
     # Act
     s = str(vache)
@@ -260,7 +262,7 @@ def test_should_include_milk_fields_in_str_given_new_vache_a_lait():
 
 def test_should_reflect_milk_values_in_str_given_ruminer_and_traire():
     # Arrange
-    vache = VacheALait(petitNom="Lola", poids=500.0, age=5)
+    vache = VacheALait(petitNom="Lola", poids=500.0, rumination_strategy=StandardMilkStrategy)
     vache.brouter(10.0)
     vache.ruminer()      # produit 11.0 L
     vache.traire(3.0)    # reste 8.0 L, total trait 3.0 L

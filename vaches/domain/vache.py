@@ -1,6 +1,8 @@
 from vaches.exceptions import InvalidVacheException
 from typing import Any
 
+from vaches.strategies.default_no_milk import NoMilkStrategy
+
 class vache:
     # --- constantes ---
     AGE_MAX = 25
@@ -12,7 +14,7 @@ class vache:
     # --- compteur d'ID (classe) ---
     NEXT_ID : int = 1
 
-    def __init__(self, petit_nom, poids):
+    def __init__(self, petit_nom, poids, rumination_strategy=NoMilkStrategy):
         self.id = self.NEXT_ID
         vache.NEXT_ID += 1
 
@@ -20,6 +22,7 @@ class vache:
         self.age = 0
         self.poids = poids
         self.panse = 0.0
+        self.rumination_strategy = rumination_strategy()
 
         self.valider_etat()
 
@@ -40,15 +43,14 @@ class vache:
         gain = vache.RENDEMENT_RUMINATION * panse_avant
         self.poids += gain
 
-        # Hooks (polymorphisme)
-        lait = self._calculer_lait(panse_avant)
-        self._stocker_lait(lait)
+        # --- STRATEGIE ---
+        lait = self.rumination_strategy.calculer_lait(self, panse_avant)
+        self.rumination_strategy.stocker_lait(self, lait)
 
         # Vidage panse
         self.panse = 0.0
 
-        # Hook post-traitement
-        self._post_rumination(panse_avant, lait)
+        self.rumination_strategy.post_rumination(self, panse_avant, lait)
 
         self.valider_etat()
 
@@ -58,15 +60,6 @@ class vache:
         if self.age >= vache.AGE_MAX:
             raise InvalidVacheException("Âge maximum atteint")
         self.age += 1
-
-    def _calculer_lait(self, panse_avant):
-        return 0.0
-
-    def _stocker_lait(self, lait):
-        pass
-
-    def _post_rumination(self, panse_avant, lait):
-        pass
 
     def ajouter_panse(self, quantite):
         if quantite <= 0:
